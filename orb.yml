@@ -106,6 +106,10 @@ commands:
       - run:
           name: starting span for job
           command: |
+            if [[ "${OSTYPE}" == "darwin"* ]]; then
+              # macOS doesn't ship with a sha256sum binary
+              function sha256sum() { shasum -a 256 "$@" ; }
+            fi
             mkdir -p /tmp/buildevents/${CIRCLE_JOB}-${CIRCLE_NODE_INDEX}
             date +%s > /tmp/buildevents/${CIRCLE_JOB}-${CIRCLE_NODE_INDEX}/start
             BUILDEVENTS_SPAN_ID=$(echo ${CIRCLE_JOB}-${CIRCLE_NODE_INDEX} | sha256sum | awk '{print $1}')
